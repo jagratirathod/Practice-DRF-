@@ -30,8 +30,12 @@ router.register(r'student', StudentView)
 
 
 urlpatterns = [
+    # admin 
     path('admin/', admin.site.urls),
+
+    # router
     path('', include(router.urls)),
+
     path('pass_context/',include('pass_context_serlizer.urls')),
     path('crud/',include('CRUD.urls')),
     path('api/',include('signup_login_api.urls')),
@@ -42,6 +46,9 @@ urlpatterns = [
     path('model_inheritance/',include('model_inheritance.urls')),
     path('management_command/',include('management_command.urls')),
     path('pagin/',include('pagination_app.urls')),
+    path('oauth2_auth/',include('oauth2_authentication.urls')),
 
+    
+    path('o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
 
 ]

@@ -48,7 +48,10 @@ INSTALLED_APPS = [
     'model_manager',
     'model_inheritance',
     'management_command',
-    'pagination_app'
+    'pagination_app',
+    'oauth2_authentication',      #app 
+    
+    'oauth2_provider' ,     # configure oauth2   
 
 ]
 
@@ -140,10 +143,56 @@ REST_FRAMEWORK = {
     'DEFAULT_PARSER_CLASSES': (
         'rest_framework.parsers.FormParser',
         'rest_framework.parsers.MultiPartParser'
-     )
+    )
  }
 
 # REST_FRAMEWORK = {
 #     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
 #     'PAGE_SIZE': 2,
 # }
+
+
+
+# oauth2 configuration - 
+
+HOSTNAME = "http://127.0.0.1:8000/"
+
+
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_METHOD = (
+    'GET' ,
+    'POST' , 
+    'PUT' ,
+    'PATCH' ,
+    'DELETE',
+    'OPTIONS'
+)
+
+
+OAUTH2_PROVIDER = {
+    'ACCESS_TOKEN_EXPIRE_SECONDS': 3600,
+    'REFRESH_TOKEN_EXPIRE_SECONDS': 2592000,
+    "SCOPES": {
+        "read"  :  "Read scope",
+        "create": "create scope",
+        "update": "update scope",
+        "delete": "delete scope",
+        "groups": "Access to your groups",
+    },
+
+}
+
+# Add OAuth2 backend to Django's authentication backends
+AUTHENTICATION_BACKENDS = (
+    'oauth2_provider.backends.OAuth2Backend',
+    'django.contrib.auth.backends.ModelBackend',
+    )
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
+    ),
+}
+
+
