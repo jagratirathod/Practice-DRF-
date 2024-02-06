@@ -11,7 +11,7 @@ from rest_framework.views import APIView
 # Create your views here.
 
 def test(request):
-    return HttpResponse("test...........")
+    return HttpResponse("This is for testing api")
 
 
 class StudentAPI(APIView):

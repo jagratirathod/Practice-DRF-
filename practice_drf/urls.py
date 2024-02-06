@@ -15,12 +15,15 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path,include
+from django.urls import path, include , re_path
 from rest_framework import routers
 from pass_context_serlizer.views import *
 from nested_serializer.views import *
 from serializer_method_field.views import *
 
+from rest_framework import permissions
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
 
 router = routers.DefaultRouter()
 router.register(r'post', PostViewSet),
@@ -29,9 +32,32 @@ router.register(r'singers', SingerView,basename='singer'),
 router.register(r'student', StudentView)
 
 
+# swagger - 
+schema_view = get_schema_view(
+    openapi.Info(
+        title="Your API",
+        default_version='v1',
+        description="API Description",
+        terms_of_service="https://www.google.com/policies/terms/",
+        contact=openapi.Contact(email="contact@yourdomain.com"),
+        license=openapi.License(name="BSD License"),
+    ),
+    public=True,
+    permission_classes=(permissions.AllowAny,),
+)
+
+
+
 urlpatterns = [
     # admin 
     path('admin/', admin.site.urls),
+
+    # swagger -
+    re_path(r'^swagger(?P<format>\.json|\.yaml)$',
+            schema_view.without_ui(cache_timeout=0), name='schema-json'),
+    re_path(r'^swagger/$', schema_view.with_ui('swagger',
+            cache_timeout=0), name='schema-swagger-ui'),
+    re_path(r'^redoc/$', schema_view.with_ui('redoc',cache_timeout=0), name='schema-redoc'),
 
     # router
     path('', include(router.urls)),
@@ -47,8 +73,10 @@ urlpatterns = [
     path('management_command/',include('management_command.urls')),
     path('pagin/',include('pagination_app.urls')),
     path('oauth2_auth/',include('oauth2_authentication.urls')),
+    path('simple_jwt/',include('app_simple_jwt.urls')),
+    path('send_otp/',include('send_otp.urls')),
 
-    
     path('o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
+
 
 ]

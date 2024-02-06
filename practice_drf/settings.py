@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'drf_yasg',                                         # swagger
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -38,6 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    
+    #app 
     'pass_context_serlizer',
     'CRUD',
     'signup_login_api',
@@ -49,10 +52,13 @@ INSTALLED_APPS = [
     'model_inheritance',
     'management_command',
     'pagination_app',
-    'oauth2_authentication',      #app 
-    
-    'oauth2_provider' ,     # configure oauth2   
-
+    'app_simple_jwt',
+    'oauth2_authentication', 
+    'send_otp' ,
+        
+    # configure
+    'oauth2_provider' ,       
+    'rest_framework_simplejwt',  
 ]
 
 MIDDLEWARE = [
@@ -195,4 +201,14 @@ REST_FRAMEWORK = {
     ),
 }
 
+# swagger - 
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': {
 
+        'Bearer': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header'
+        }
+    }
+}
