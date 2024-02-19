@@ -25,11 +25,11 @@ from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
-router = routers.DefaultRouter()
-router.register(r'post', PostViewSet),
-router.register(r'songs', SongView, basename='song'),
-router.register(r'singers', SingerView,basename='singer'),
-router.register(r'student', StudentView)
+# router = routers.DefaultRouter()
+# router.register(r'post', PostViewSet),
+# router.register(r'songs', SongView, basename='song'),
+# router.register(r'singers', SingerView,basename='singer'),
+# router.register(r'student', StudentView)
 
 
 # swagger - 
@@ -60,7 +60,7 @@ urlpatterns = [
     re_path(r'^redoc/$', schema_view.with_ui('redoc',cache_timeout=0), name='schema-redoc'),
 
     # router
-    path('', include(router.urls)),
+    # path('', include(router.urls)),
 
     path('pass_context/',include('pass_context_serlizer.urls')),
     path('crud/',include('CRUD.urls')),
@@ -75,6 +75,7 @@ urlpatterns = [
     path('oauth2_auth/',include('oauth2_authentication.urls')),
     path('simple_jwt/',include('app_simple_jwt.urls')),
     path('send_otp/',include('send_otp.urls')),
+    path('type_seri/',include('type_of_serializer.urls')),
 
     path('o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
 

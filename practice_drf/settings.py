@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'app_simple_jwt',
     'oauth2_authentication', 
     'send_otp' ,
+    'type_of_serializer',
         
     # configure
     'oauth2_provider' ,       

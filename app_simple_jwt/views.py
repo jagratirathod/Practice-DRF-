@@ -5,11 +5,14 @@ import requests
 from practice_drf.settings import HOSTNAME
 from rest_framework.response import Response
 from .serializer import  UserSerializer
+from drf_yasg.utils import swagger_auto_schema
 
 # Create your views here.
 
 
 class SignIn(APIView):
+    @swagger_auto_schema(request_body=UserSerializer)
+
     def post(self,request):
         serializer = UserSerializer(data = request.data)
         if serializer.is_valid():
@@ -33,6 +36,7 @@ class SignIn(APIView):
         
 
 class CreateRefreshToken(APIView):
+        
         def post(self, request):
                 token_data = {
                         "refresh": request.data.get('refresh'),

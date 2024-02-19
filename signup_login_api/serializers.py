@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
 
-class UserSerializer(serializers.ModelSerializer):
+class RegistrationSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['username' , 'email', 'password' ]
@@ -9,10 +9,10 @@ class UserSerializer(serializers.ModelSerializer):
             'password':{'write_only':True}
         }
 
-    def  validate_password(self,value):
-        if len(value)!=8:
-            raise serializers.ValidationError("Password should be 8 digit") 
-        return value
+    # def  validate_password(self,value):
+    #     if len(value)!=8:
+    #         raise serializers.ValidationError("Password should be 8 digit") 
+    #     return value
 
         
     def create(self, validated_data):
@@ -29,7 +29,7 @@ class UserSerializer(serializers.ModelSerializer):
         return user
     
     
-class LoginSerializer(serializers.ModelSerializer):
+class SignInSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['email', 'password']

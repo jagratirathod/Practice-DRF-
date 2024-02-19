@@ -8,6 +8,7 @@ from django.http import HttpResponse
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
 from rest_framework.parsers import JSONParser, MultiPartParser
+from drf_yasg.utils import swagger_auto_schema
 
 # Create your views here.
 
@@ -21,8 +22,9 @@ class SignupApi(APIView):
 
     # with token - # settings.py -> installed_app -    'rest_framework.authtoken'  then migrate
 
+    @swagger_auto_schema(request_body=RegistrationSerializer)
     def post(self, request):
-        serializer = UserSerializer(data=request.data)
+        serializer = RegistrationSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             user = User.objects.get(username=serializer.data['username'])
@@ -38,22 +40,23 @@ class SignupApi(APIView):
             return Response("User Already Exists")
 
 
-# not working
 class Login(APIView):
-    parser_classes = (JSONParser, MultiPartParser)
+    @swagger_auto_schema(request_body=SignInSerializer)
+
+    # def post(self, request):
+    #     email = self.request.data["email"]
+    #     password = self.request.data["password"]
+
+    #     user = User.objects.get(email=email)
+    #     if user.check_password(password):
+    #         serializer = SignInSerializer(user)
+    #         return Response(serializer.data)
+    #     return Response("Invalid user")
 
     def post(self, request):
-        email = request.data["email"]
-        password = request.data["password"]
-        user = User.objects.filter(email=email)
-        if user.check_password(str(password)):
-            return Response("Successfully Login")
-        return Response("Invalid user")
-
-    def post(self, request):
-        email = request.data["email"]
-        password = request.data["password"]
-        user = User.objects.filter(email=email)
+        email = self.request.data["email"]  
+        password = self.request.data["password"]
+        user = User.objects.get(email=email)
         if user.check_password(password):
             token, created = Token.objects.get_or_create(user=user)
             return Response({
@@ -79,6 +82,7 @@ class EditProfile(APIView):
             return Response("Successfully Edit !")
         else:
             return Response("Invalid user")
+
 
 
 

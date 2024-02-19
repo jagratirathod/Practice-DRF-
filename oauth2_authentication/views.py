@@ -1,13 +1,14 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from rest_framework.views import APIView
-from .serializer import UserSerializer , LoginSerializer
+from .serializer import SignupUserSerializer , LoginUserSerializer
 from rest_framework.response import Response
 from django.contrib.auth.models import User
 from oauth2_provider.models import  Application
 import requests
 import json
 from practice_drf.settings import HOSTNAME
+from drf_yasg.utils import swagger_auto_schema
 
 
 # Create your views here.
@@ -18,9 +19,10 @@ def test(request):
 
 
 class SignupView(APIView):
-    
+    @swagger_auto_schema(request_body=SignupUserSerializer)
+
     def post(self , request):
-        serializer = UserSerializer(data = request.data)
+        serializer = SignupUserSerializer(data = request.data)
         if serializer.is_valid():
             serializer.save()
 
@@ -68,12 +70,13 @@ class SignupView(APIView):
   
 
 class LoginView(APIView):
+    @swagger_auto_schema(request_body=LoginUserSerializer)
     def post(self, request):
         email = self.request.data["email"]
         password = self.request.data["password"]
         user = User.objects.get(email=email)
         user.check_password(password)
         if user:
-            serializer = LoginSerializer(user)
+            serializer = LoginUserSerializer(user)
             return Response(serializer.data)
         return Response("You have not signed up! Please sign up first.")
