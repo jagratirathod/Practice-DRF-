@@ -2,7 +2,7 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 
 
-class UserSerializer(serializers.ModelSerializer):
+class SignupUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['username','email','password']
@@ -18,7 +18,7 @@ class UserSerializer(serializers.ModelSerializer):
         return user
 
 
-class LoginSerializer(serializers.ModelSerializer):
+class LoginUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['email','password']
