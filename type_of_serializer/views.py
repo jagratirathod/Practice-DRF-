@@ -21,6 +21,23 @@ class CreatePerson(APIView):
             Person.objects.create(first_name = request.data['first_name'] , last_name = request.data['last_name'])
             return Response("Successfully created !")
         return Response("Invalid")
+
+    @swagger_auto_schema(request_body=PersonSerializer)
+    def patch(self,request,id):
+        person =  Person.objects.get(id = id)
+        serializer = PersonSerializer(data = request.data , partial = True)
+        if serializer.is_valid():
+            person_info = serializer.validated_data
+            person.first_name = person_info.get("first_name") if person_info.get("first_name") else person.first_name
+            person.last_name = person_info.get("last_name") if person_info.get("last_name") else person.last_name
+            person.save()
+            return  Response({'msg':'Patial data is updated'})
+        return Response(serializer.error)
+
+
+
+
+        
     
 
 class PersonList(generics.ListCreateAPIView):
