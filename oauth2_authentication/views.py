@@ -18,6 +18,9 @@ def test(request):
     return HttpResponse("test...........")
 
 
+
+
+
 class SignupView(APIView):
     @swagger_auto_schema(request_body=SignupUserSerializer)
 
@@ -55,8 +58,8 @@ class SignupView(APIView):
                 refresh_token = token_response.json()['refresh_token']
                 return Response(
                     {
-                        "access": access_token,
-                        "refresh": refresh_token,
+                        "access token": f"Bearer {access_token}" ,
+                        "refresh token": f"Bearer {refresh_token}" ,
                     }
                 )
         else:
@@ -72,11 +75,60 @@ class SignupView(APIView):
 class LoginView(APIView):
     @swagger_auto_schema(request_body=LoginUserSerializer)
     def post(self, request):
-        email = self.request.data["email"]
-        password = self.request.data["password"]
-        user = User.objects.get(email=email)
-        user.check_password(password)
-        if user:
-            serializer = LoginUserSerializer(user)
-            return Response(serializer.data)
-        return Response("You have not signed up! Please sign up first.")
+        email = request.data.get("email")
+        password = request.data.get("password")
+
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            return Response({"error": "You have not signed up! Please sign up first."}, status=400)
+
+        if not user.check_password(password):
+            return Response({"error": "Invalid credentials"}, status=401)
+
+        # Get or create OAuth2 Application for user
+        app = Application(
+            user=user,
+            authorization_grant_type="password",
+            client_type="confidential",
+            name=user.username,
+            redirect_uris=HOSTNAME
+        )
+
+        # Prepare token request payload
+        auth_data = {
+            "username": user.username,
+            "password": password,
+            "grant_type": "password",
+            "client_id": app.client_id,
+            "client_secret": app.client_secret,
+        }
+
+        app.save()
+
+        # Send POST request to token endpoint
+        token_response = requests.post(HOSTNAME + "o/token/", data=auth_data)
+
+        if token_response.status_code == 200:
+            tokens = token_response.json()
+            return Response({
+                "access token": f"Bearer {tokens['access_token']}",
+                "refresh token" : f"Bearer {tokens['refresh_token']}"
+            })
+        else:
+            return Response({"error": "Failed to generate token"}, status=token_response.status_code)
+
+
+# class LoginView(APIView):
+#     @swagger_auto_schema(request_body=LoginUserSerializer)
+#     def post(self, request):
+#         email = self.request.data["email"]
+#         password = self.request.data["password"]
+#         user = User.objects.get(email=email)
+#         user.check_password(password)
+#         if user:
+#             serializer = LoginUserSerializer(user)
+#             return Response(serializer.data)
+#         return Response("You have not signed up! Please sign up first.")
+
+
